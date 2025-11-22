@@ -2,7 +2,7 @@ require("dotenv").config();
 const { connect_db } = require("./config/db_connect");
 const express = require("express");
 const cors = require("cors");
-const { tokenValidator } = require("./middleware/token_validator");
+const cookieParser = require("cookie-parser");
 
 connect_db();
 
@@ -18,8 +18,11 @@ app.use(
   })
 );
 
+app.use(cookieParser());
 app.use("/twist_digital_blog/api/auth", require("./routes/auth.routes"));
 app.use("/twist_digital_blog/api/users", require("./routes/user.routes"));
+app.use("/twist_digital_blog/api/blogs", require("./routes/blog.routes"));
+app.use("/twist_digital_blog/api/likes", require("./routes/like.routes"));
 
 app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);

@@ -12,6 +12,8 @@ const tokenValidator = (req, res, next) => {
     req.user = decoded_data;
     next();
   } catch (error) {
+    console.log(error);
+
     return res
       .status(500)
       .json({ success: false, message: "token validation check failed" });
