@@ -13,7 +13,6 @@ export const createNewUser = async (values: z.infer<typeof UserSchema>) => {
         email: values.email,
         password: values.password,
       });
-
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
