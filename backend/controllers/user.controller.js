@@ -11,6 +11,16 @@ const createNewUser = async (req, res) => {
       });
     }
 
+    const duplicate_email_check = await user.findOne({ email });
+    console.log(duplicate_email_check);
+
+    if (duplicate_email_check) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already registered to the different account!",
+      });
+    }
+
     const salt_rounds = await bcrypt.genSalt(10);
     const hashed_password = await bcrypt.hash(password, salt_rounds);
 
