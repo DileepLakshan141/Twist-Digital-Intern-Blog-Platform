@@ -61,7 +61,7 @@ const SignUpPage = () => {
               className="block m-auto"
             />
             <CardTitle className="text-2xl flex justify-center items-center">
-              Join BLGR Today
+              Join Blgr Today
             </CardTitle>
             <CardDescription className="text-center mt-2 mb-4">
               Create your own space on the internet. Write, publish, and grow an

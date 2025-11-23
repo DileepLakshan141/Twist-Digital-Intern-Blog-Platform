@@ -24,8 +24,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { loginUser } from "@/actions/signin";
 import { toast } from "sonner";
+import { useAppDispatch } from "@/utils/store";
+import { signin_user } from "@/utils/slices/user.slice";
+import { useRouter } from "next/navigation";
 
 const SignInPage = () => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const signInForm = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -40,6 +45,16 @@ const SignInPage = () => {
       toast.success(response.message);
       signInForm.reset();
       signInForm.clearErrors();
+      dispatch(
+        signin_user({
+          user_id: response.user.id,
+          email: response.user.email,
+          username: response.user.username,
+          profile_pic: response.user.profile_pic,
+          isAuthenticated: true,
+        })
+      );
+      router.replace("/dashboard/blogs");
     } else {
       toast.error(response.message);
     }
