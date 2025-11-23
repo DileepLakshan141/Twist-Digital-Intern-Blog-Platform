@@ -122,7 +122,6 @@ const CreateNewBlog = () => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Title Field */}
               <FormField
                 control={form.control}
                 name="title"
@@ -161,7 +160,6 @@ const CreateNewBlog = () => {
                 )}
               </FormItem>
 
-              {/* Cover Image Field */}
               <FormField
                 control={form.control}
                 name="cover_image"
@@ -176,7 +174,6 @@ const CreateNewBlog = () => {
                 )}
               />
 
-              {/* Submit Button */}
               <div className="flex justify-end">
                 <Button
                   type="submit"
