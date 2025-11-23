@@ -100,16 +100,7 @@ const CreateNewBlog = () => {
     },
   });
 
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-      console.log("Form values:", value);
-    });
-    return () => subscription.unsubscribe();
-  }, [form]);
-
   const onSubmit = async (data: z.infer<typeof BlogFormSchema>) => {
-    console.log("onSubmit triggered with data:", data);
-
     if (!editor) {
       toast.error("Editor not loaded yet");
       return;
@@ -137,7 +128,6 @@ const CreateNewBlog = () => {
       };
 
       const response = await axiosInstance.post("/blogs/create", blog_data);
-      console.log(response);
 
       if (response.data.success) {
         toast.success(response.data.message);
@@ -165,15 +155,6 @@ const CreateNewBlog = () => {
     if (file) {
       setCoverImage(file);
     }
-  };
-
-  // Test if button is clickable
-  const handleButtonClick = (e: React.MouseEvent) => {
-    console.log("Button clicked");
-    console.log(
-      "Current disabled state:",
-      textContent.length < 50 || isUploading
-    );
   };
 
   return (
@@ -204,11 +185,10 @@ const CreateNewBlog = () => {
                 )}
               />
 
-              {/* Add content as a FormField */}
               <FormField
                 control={form.control}
                 name="content"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Content</FormLabel>
                     <FormControl>
@@ -260,7 +240,6 @@ const CreateNewBlog = () => {
                   type="submit"
                   size="lg"
                   disabled={textContent.length < 50 || isUploading}
-                  onClick={handleButtonClick} // For debugging
                 >
                   <Rss className="mr-2" />
                   {isUploading ? "Uploading..." : "Create Blog"}
