@@ -31,7 +31,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ToolBar from "./_toolbar/toolbar";
 import { BlogFormSchema } from "@/schemas/blog";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Rss } from "lucide-react";
 import { toast } from "sonner";
 import { uploadToCloudinary } from "../../../utils/cloudinary/image_handler";
