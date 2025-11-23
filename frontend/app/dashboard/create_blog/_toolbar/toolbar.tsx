@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   AlignCenter,
   AlignLeft,
+  AlignRight,
   Bold,
   Heading1,
   Heading2,
@@ -183,7 +184,7 @@ const ToolBar = ({ editor }: { editor: Editor | null }) => {
             <Subscript />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom">Heading 2</TooltipContent>
+        <TooltipContent side="bottom">Subscript</TooltipContent>
       </Tooltip>
 
       {/* bullet list */}
@@ -275,10 +276,10 @@ const ToolBar = ({ editor }: { editor: Editor | null }) => {
               )
             }
           >
-            <AlignCenter />
+            <AlignRight />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom">Center Align</TooltipContent>
+        <TooltipContent side="bottom">Right Align</TooltipContent>
       </Tooltip>
     </div>
   );

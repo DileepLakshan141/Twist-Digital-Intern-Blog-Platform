@@ -23,10 +23,10 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { logoutUser } from "@/actions/signout";
 import { toast } from "sonner";
 import { signout_user } from "@/utils/slices/user.slice";
 import { useRouter } from "next/navigation";
+import { axiosInstance } from "@/axios/axios_instance";
 
 const HeaderComponent = () => {
   const user = useAppSelector((state) => state.user);
@@ -34,13 +34,13 @@ const HeaderComponent = () => {
   const router = useRouter();
   const logoutHandler = async () => {
     try {
-      const response = await logoutUser();
-      if (response.success) {
+      const response = await axiosInstance.post("/auth/signout");
+      if (response.data.success) {
         dispatch(signout_user());
         router.replace("/");
-        toast.success(response.message);
+        toast.success(response.data.message);
       } else {
-        toast.error(response.message);
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -94,14 +94,18 @@ const HeaderComponent = () => {
               <DropdownMenuLabel>Welcome Back!</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <MessageCircle />
-                  <Link href="/dashboard/blogs">All blogs</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <PencilLine />
-                  <Link href="/dashboard/create_blog">Create new blog</Link>
-                </DropdownMenuItem>
+                <Link href="/dashboard/blogs">
+                  <DropdownMenuItem>
+                    <MessageCircle />
+                    All blogs
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/dashboard/create_blog">
+                  <DropdownMenuItem>
+                    <PencilLine />
+                    Create new blog
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>
                   <Rss />
                   My blogs

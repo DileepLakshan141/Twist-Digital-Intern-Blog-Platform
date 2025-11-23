@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
       httpOnly: true,
       secure: process.env.ENVIRONMENT === "production",
       maxAge: 1000 * 60 * 30,
-      sameSite: "Strict",
+      sameSite: "lax",
     });
 
     return res.status(200).json({
@@ -60,7 +60,7 @@ const logoutUser = (req, res) => {
     res.cookie("blog_access_token", "", {
       httpOnly: true,
       secure: process.env.ENVIRONMENT === "production",
-      sameSite: "Strict",
+      sameSite: "lax",
       expires: new Date(0),
     });
 

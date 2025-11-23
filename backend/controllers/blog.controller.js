@@ -22,12 +22,17 @@ const createNewBlog = async (req, res) => {
       });
     }
 
-    const created_blog = await blog.create({
+    let blog_data = {
       title,
       content,
       author: author_id,
-      ...(cover_image && { cover_image }),
-    });
+    };
+
+    if (cover_image && cover_image.trim() !== "") {
+      blog_data.cover_image = cover_image;
+    }
+
+    const created_blog = await blog.create(blog_data);
 
     if (created_blog) {
       return res
@@ -83,12 +88,10 @@ const getSpecificBlog = async (req, res) => {
         .status(200)
         .json({ success: true, message: "blog details fetched!", target_blog });
     } else {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "blog no longer exists in the database!",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "blog no longer exists in the database!",
+      });
     }
   } catch (error) {
     console.error(error);

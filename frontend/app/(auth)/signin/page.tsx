@@ -1,4 +1,5 @@
 "use client";
+import { axiosInstance } from "@/axios/axios_instance";
 import {
   Card,
   CardContent,
@@ -22,7 +23,6 @@ import { LoginSchema } from "@/schemas/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { loginUser } from "@/actions/signin";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/utils/store";
 import { signin_user } from "@/utils/slices/user.slice";
@@ -40,23 +40,26 @@ const SignInPage = () => {
   });
 
   const loginFormSubmission = async (values: z.infer<typeof LoginSchema>) => {
-    const response = await loginUser(values);
-    if (response.success) {
-      toast.success(response.message);
+    const response = await axiosInstance.post("/auth/signin", {
+      email: values.email,
+      password: values.password,
+    });
+    if (response.data.success) {
+      toast.success(response.data.message);
       signInForm.reset();
       signInForm.clearErrors();
       dispatch(
         signin_user({
-          user_id: response.user.id,
-          email: response.user.email,
-          username: response.user.username,
-          profile_pic: response.user.profile_pic,
+          user_id: response.data.user.id,
+          email: response.data.user.email,
+          username: response.data.user.username,
+          profile_pic: response.data.user.profile_pic,
           isAuthenticated: true,
         })
       );
       router.replace("/dashboard/blogs");
     } else {
-      toast.error(response.message);
+      toast.error(response.data.message);
     }
   };
 
@@ -126,7 +129,7 @@ const SignInPage = () => {
                 </div>
 
                 <Button type="submit" className="w-full my-2">
-                  Sign Up
+                  Sign In
                 </Button>
                 <Button
                   onClick={() => {

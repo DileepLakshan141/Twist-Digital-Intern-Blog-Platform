@@ -19,6 +19,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -30,12 +31,18 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ToolBar from "./_toolbar/toolbar";
 import { BlogFormSchema } from "@/schemas/blog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Rss } from "lucide-react";
+import { toast } from "sonner";
+import { uploadToCloudinary } from "../../../utils/cloudinary/image_handler";
+import { axiosInstance } from "@/axios/axios_instance";
 
 const CreateNewBlog = () => {
   const user = useAppSelector((state) => state.user);
+  const router = useRouter();
   const [textContent, setTextContent] = useState("");
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -77,7 +84,9 @@ const CreateNewBlog = () => {
       },
     },
     onUpdate({ editor }) {
-      setTextContent(editor.getText());
+      const content = editor.getText();
+      setTextContent(content);
+      form.setValue("content", editor.getHTML(), { shouldValidate: true });
     },
   });
 
@@ -85,27 +94,86 @@ const CreateNewBlog = () => {
     resolver: zodResolver(BlogFormSchema),
     defaultValues: {
       title: "",
+      content: "",
       author_id: user.user_id || "default_user_id",
       cover_image: "",
     },
   });
 
-  const onSubmit = (data: z.infer<typeof BlogFormSchema>) => {
-    if (!editor) return;
-
-    const content = editor.getHTML() || "";
-    const currentTextContent = editor.getText() || "";
-
-    console.log("Blog Data:", {
-      ...data,
-      content: content,
-      plainText: currentTextContent,
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      console.log("Form values:", value);
     });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
-    if (currentTextContent.trim().length < 50) {
-      alert("Content should be at least 50 characters long");
+  const onSubmit = async (data: z.infer<typeof BlogFormSchema>) => {
+    console.log("onSubmit triggered with data:", data);
+
+    if (!editor) {
+      toast.error("Editor not loaded yet");
       return;
     }
+
+    const currentTextContent = editor.getText() || "";
+
+    if (currentTextContent.trim().length < 50) {
+      toast.error("Content should be at least 50 characters long");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      let coverImageUrl = "";
+      if (coverImage) {
+        coverImageUrl = await uploadToCloudinary(coverImage);
+      }
+
+      const blog_data = {
+        title: data.title,
+        content: data.content,
+        author_id: data.author_id,
+        cover_image: coverImageUrl,
+      };
+
+      const response = await axiosInstance.post("/blogs/create", blog_data);
+      console.log(response);
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        router.refresh();
+        form.reset();
+        form.clearErrors();
+        editor.commands.clearContent();
+        setTextContent("");
+        setCoverImage(null);
+        router.refresh();
+      } else {
+        console.log(response);
+        toast.error(response.data.success.message || "Failed to create blog");
+      }
+    } catch (error) {
+      console.error("Error creating blog:", error);
+      toast.error("Failed to create the blog post. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverImage(file);
+    }
+  };
+
+  // Test if button is clickable
+  const handleButtonClick = (e: React.MouseEvent) => {
+    console.log("Button clicked");
+    console.log(
+      "Current disabled state:",
+      textContent.length < 50 || isUploading
+    );
   };
 
   return (
@@ -136,52 +204,66 @@ const CreateNewBlog = () => {
                 )}
               />
 
-              <FormItem>
-                <FormLabel>Content</FormLabel>
-                <FormControl>
-                  <div className="border rounded-md overflow-hidden">
-                    {editor && <ToolBar editor={editor} />}
-                    <EditorContent
-                      editor={editor}
-                      className="min-h-[300px] prose prose-sm sm:prose-base max-w-none focus:outline-none"
-                    />
-                  </div>
-                </FormControl>
-                {textContent.length > 0 && textContent.length < 50 && (
-                  <p className="text-sm text-destructive mt-2">
-                    Content should be at least 50 characters (currently:{" "}
-                    {textContent.length})
-                  </p>
-                )}
-                {textContent.length >= 50 && (
-                  <p className="text-sm text-green-600 mt-2">
-                    {textContent.length} characters - Good to go!
-                  </p>
-                )}
-              </FormItem>
-
+              {/* Add content as a FormField */}
               <FormField
                 control={form.control}
-                name="cover_image"
+                name="content"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cover Image</FormLabel>
+                    <FormLabel>Content</FormLabel>
                     <FormControl>
-                      <Input type="file" {...field} />
+                      <div className="border rounded-md overflow-hidden">
+                        {editor && <ToolBar editor={editor} />}
+                        <EditorContent
+                          editor={editor}
+                          className="min-h-[300px] prose prose-sm sm:prose-base max-w-none focus:outline-none"
+                        />
+                      </div>
                     </FormControl>
+                    {textContent.length > 0 && textContent.length < 50 && (
+                      <p className="text-sm text-destructive mt-2">
+                        Content should be at least 50 characters (currently:{" "}
+                        {textContent.length})
+                      </p>
+                    )}
+                    {textContent.length >= 50 && (
+                      <p className="text-sm text-green-600 mt-2">
+                        {textContent.length} characters - Good to go!
+                      </p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              <FormItem>
+                <FormLabel>Cover Image</FormLabel>
+                <FormControl>
+                  <div className="space-y-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      disabled={isUploading}
+                    />
+                    {coverImage && (
+                      <p className="text-sm text-green-600">
+                        Image selected: {coverImage.name}
+                      </p>
+                    )}
+                  </div>
+                </FormControl>
+              </FormItem>
+
               <div className="flex justify-end">
                 <Button
                   type="submit"
                   size="lg"
-                  disabled={textContent.length < 50}
+                  disabled={textContent.length < 50 || isUploading}
+                  onClick={handleButtonClick} // For debugging
                 >
-                  <Rss />
-                  Create Blog
+                  <Rss className="mr-2" />
+                  {isUploading ? "Uploading..." : "Create Blog"}
                 </Button>
               </div>
             </form>

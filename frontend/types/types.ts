@@ -15,3 +15,7 @@ export type blog = {
   likes: number;
   createdAt: Date;
 };
+
+export type CloudinaryResult = {
+  secure_url: string;
+};
