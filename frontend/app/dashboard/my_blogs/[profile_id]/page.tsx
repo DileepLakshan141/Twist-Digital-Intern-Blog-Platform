@@ -110,7 +110,7 @@ const MyBlogs = ({ params }: { params: Promise<{ profile_id: string }> }) => {
         {blogs.length === 0 ? (
           <Empty>
             <EmptyHeader>
-              <EmptyMedia>
+              <EmptyMedia variant="icon">
                 <Brush />
               </EmptyMedia>
               <EmptyDescription>

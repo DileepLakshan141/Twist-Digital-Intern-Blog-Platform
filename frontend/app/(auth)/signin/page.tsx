@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { useAppDispatch } from "@/utils/store";
 import { signin_user } from "@/utils/slices/user.slice";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 
 const SignInPage = () => {
   const router = useRouter();
@@ -40,26 +41,31 @@ const SignInPage = () => {
   });
 
   const loginFormSubmission = async (values: z.infer<typeof LoginSchema>) => {
-    const response = await axiosInstance.post("/auth/signin", {
-      email: values.email,
-      password: values.password,
-    });
-    if (response.data.success) {
-      toast.success(response.data.message);
-      signInForm.reset();
-      signInForm.clearErrors();
-      dispatch(
-        signin_user({
-          user_id: response.data.user.id,
-          email: response.data.user.email,
-          username: response.data.user.username,
-          profile_pic: response.data.user.profile_pic,
-          isAuthenticated: true,
-        })
-      );
-      router.replace("/dashboard/blogs");
-    } else {
-      toast.error(response.data.message);
+    try {
+      const response = await axiosInstance.post("/auth/signin", {
+        email: values.email,
+        password: values.password,
+      });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        signInForm.reset();
+        signInForm.clearErrors();
+        dispatch(
+          signin_user({
+            user_id: response.data.user.id,
+            email: response.data.user.email,
+            username: response.data.user.username,
+            profile_pic: response.data.user.profile_pic,
+            isAuthenticated: true,
+          })
+        );
+        router.replace("/dashboard/blogs");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
     }
   };
 

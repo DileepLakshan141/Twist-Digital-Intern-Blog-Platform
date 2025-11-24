@@ -37,6 +37,15 @@ export type comment = {
   createdAt: Date;
 };
 
+export type liked_blogs = {
+  _id: string;
+  createdAt: Date;
+  blog_id: {
+    title: string;
+    _id: string;
+  };
+};
+
 export type CloudinaryResult = {
   secure_url: string;
 };

@@ -72,6 +72,27 @@ const getAllBlogs = async (req, res) => {
   }
 };
 
+const getRecentBlogs = async (req, res) => {
+  try {
+    const recent_blogs = await blog
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .populate("author", "username profile_pic createdAt");
+
+    return res.status(200).json({
+      success: true,
+      message: "recent blogs fetched successfully",
+      recent_blogs,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "server error! recent blog fetch failed!",
+    });
+  }
+};
+
 const getAllBlogsBelongToUser = async (req, res) => {
   try {
     const { profile_id } = req.params;
@@ -283,6 +304,7 @@ const deleteSpecificBlog = async (req, res) => {
 
 module.exports = {
   getAllBlogs,
+  getRecentBlogs,
   getSpecificBlog,
   createNewBlog,
   updateSpecificBlog,

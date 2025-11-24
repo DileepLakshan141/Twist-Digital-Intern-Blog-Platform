@@ -5,8 +5,6 @@ import {
   Rss,
   MessageCircle,
   UserPen,
-  ThumbsUp,
-  MessageSquareHeart,
   LogOut,
   Home,
 } from "lucide-react";
@@ -56,10 +54,15 @@ const HeaderComponent = () => {
         <Image src="/blgr.png" height={4} width={60} alt="blgr_logo_mini" />
 
         {/* links section */}
-        <div className="hidden md:flex w-full max-w-[300px] justify-evenly items-center lg:flex">
+        <div className="hidden md:flex w-full max-w-[300px] justify-center items-center lg:flex">
           <Link href="/">
             <Button variant="outline">
               <Home /> Home
+            </Button>
+          </Link>
+          <Link href="/dashboard/blogs">
+            <Button className="ml-4" variant="outline">
+              <Rss /> All Blogs
             </Button>
           </Link>
         </div>
@@ -115,17 +118,6 @@ const HeaderComponent = () => {
                     My profile
                   </DropdownMenuItem>
                 </Link>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <ThumbsUp />
-                  Liked blogs
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MessageSquareHeart />
-                  Commented blogs
-                </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>

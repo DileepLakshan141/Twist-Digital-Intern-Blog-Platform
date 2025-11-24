@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getAllBlogs,
+  getRecentBlogs,
   getSpecificBlog,
   createNewBlog,
   updateSpecificBlog,
@@ -12,6 +13,7 @@ const router = express.Router();
 const { tokenValidator } = require("../middleware/token_validator");
 
 router.get("/all", getAllBlogs);
+router.get("/recent", getRecentBlogs);
 router.get("/myblogs/:profile_id", tokenValidator, getAllBlogsBelongToUser);
 router.get("/:blog_id", getSpecificBlog);
 router.post("/create", tokenValidator, createNewBlog);

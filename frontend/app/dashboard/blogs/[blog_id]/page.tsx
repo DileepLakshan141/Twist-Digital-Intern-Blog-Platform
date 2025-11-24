@@ -256,7 +256,7 @@ const ReadBlogContent = ({
           ""
         )}
         <Separator />
-        {comments.length < 1 ? (
+        {!commentsLoader && comments.length < 1 ? (
           <Empty className="m-auto">
             <EmptyHeader>
               <EmptyMedia variant="icon">
