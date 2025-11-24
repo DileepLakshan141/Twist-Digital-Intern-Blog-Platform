@@ -17,7 +17,8 @@ const BlogSchema = mongoose.Schema(
     },
     cover_image: {
       type: String,
-      default: "sample",
+      default:
+        "https://res.cloudinary.com/dixbfipcw/image/upload/v1763997105/default_jgrgee.jpg",
     },
     likes: {
       type: Number,

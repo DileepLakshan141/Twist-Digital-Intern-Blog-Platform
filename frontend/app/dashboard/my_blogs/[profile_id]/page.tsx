@@ -124,9 +124,9 @@ const MyBlogs = ({ params }: { params: Promise<{ profile_id: string }> }) => {
             {blogs.map((blog) => (
               <div
                 key={blog._id}
-                className="w-full flex justify-end items-center border rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 bg-white"
+                className="w-full flex justify-start items-center border rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 bg-white"
               >
-                <div className="flex flex-col md:flex-row">
+                <div className="flex flex-col md:flex-row ">
                   <div className="h-[250px] w-full p-3 md:w-[350px]">
                     <img
                       src={blog.cover_image}

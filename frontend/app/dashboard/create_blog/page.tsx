@@ -36,6 +36,7 @@ import { Rss } from "lucide-react";
 import { toast } from "sonner";
 import { uploadToCloudinary } from "../../../utils/cloudinary/image_handler";
 import { axiosInstance } from "@/axios/axios_instance";
+import { AxiosError } from "axios";
 
 const CreateNewBlog = () => {
   const user = useAppSelector((state) => state.user);
@@ -143,8 +144,9 @@ const CreateNewBlog = () => {
         toast.error(response.data.success.message || "Failed to create blog");
       }
     } catch (error) {
-      console.error("Error creating blog:", error);
-      toast.error("Failed to create the blog post. Please try again.");
+      const axiosError = error as AxiosError<{ message: string }>;
+      console.error("Error creating blog:", axiosError);
+      toast.error(axiosError.response?.data.message);
     } finally {
       setIsUploading(false);
     }
