@@ -6,11 +6,13 @@ const {
   updateSpecificBlog,
   deleteSpecificBlog,
   searchBlogs,
+  getAllBlogsBelongToUser,
 } = require("../controllers/blog.controller");
 const router = express.Router();
 const { tokenValidator } = require("../middleware/token_validator");
 
 router.get("/all", getAllBlogs);
+router.get("/myblogs/:profile_id", tokenValidator, getAllBlogsBelongToUser);
 router.get("/:blog_id", getSpecificBlog);
 router.post("/create", tokenValidator, createNewBlog);
 router.post("/search", searchBlogs);

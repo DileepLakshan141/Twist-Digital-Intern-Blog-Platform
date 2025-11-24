@@ -1,4 +1,5 @@
 const blog = require("../models/blog.model");
+const mongoose = require("mongoose");
 
 const createNewBlog = async (req, res) => {
   try {
@@ -62,6 +63,47 @@ const getAllBlogs = async (req, res) => {
       message: "blogs fetched successfully",
       data: all_blogs,
     });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "server error! blog fetch failed!",
+    });
+  }
+};
+
+const getAllBlogsBelongToUser = async (req, res) => {
+  try {
+    const { profile_id } = req.params;
+
+    if (!profile_id) {
+      return res.status(404).json({
+        success: false,
+        message: "profile id not found in params object!",
+      });
+    }
+
+    if (!req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "user need to sign in first! no token found!",
+      });
+    }
+
+    if (req.user.id != profile_id) {
+      return res.status(403).json({
+        success: false,
+        message: "signed user id and received user id mimatch!",
+      });
+    }
+
+    const user_id = req.user.id;
+    const my_blogs = await blog.find({
+      author: user_id,
+    });
+    return res
+      .status(200)
+      .json({ success: true, message: "blog results fetched!", my_blogs });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -246,4 +288,5 @@ module.exports = {
   updateSpecificBlog,
   deleteSpecificBlog,
   searchBlogs,
+  getAllBlogsBelongToUser,
 };

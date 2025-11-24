@@ -198,7 +198,7 @@ const ReadBlogContent = ({
             <Separator className="my-2" />
             {blogDetails && (
               <article
-                className="prose max-w-none"
+                className="prose max-w-none ProseMirror"
                 dangerouslySetInnerHTML={{ __html: blogDetails.content }}
               />
             )}

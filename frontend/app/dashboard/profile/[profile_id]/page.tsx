@@ -30,7 +30,10 @@ const UserProfileDetails = ({
   const profileForm = useForm();
   return (
     <article className="w-full max-w-[1100px] min-h-[700px] m-auto px-5 flex flex-col justify-start items-center">
-      this is the profile page of profile {profile_id}
+      <Card>
+        <CardTitle>My Profile</CardTitle>
+        <CardDescription></CardDescription>
+      </Card>
     </article>
   );
 };
