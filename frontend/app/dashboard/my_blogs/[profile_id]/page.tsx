@@ -95,7 +95,11 @@ const MyBlogs = ({ params }: { params: Promise<{ profile_id: string }> }) => {
   };
 
   if (loading) {
-    return <CustomLoader />;
+    return (
+      <CustomLoader
+        params={{ loading_prompt: "Looking for your blogs. Please wait" }}
+      />
+    );
   }
 
   return (

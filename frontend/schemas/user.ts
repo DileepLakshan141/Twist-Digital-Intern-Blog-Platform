@@ -19,3 +19,9 @@ export const LoginSchema = z.object({
   email: z.email(),
   password: z.string().min(8, "Minimum 8 characters or letters required"),
 });
+
+export const ProfileSchema = z.object({
+  username: z.string().optional(),
+  email: z.string().optional(),
+  profile_pic: z.string().optional(),
+});

@@ -22,7 +22,7 @@ const CommentCard = ({ comment_info }: { comment_info: comment }) => {
             {comment_info.user_id.username}
           </span>
           <span className="text-sm text-gray-500 dark:text-gray-400">
-            {dayjs(comment_info.user_id.createdAt).format("DD MMMM, YYYY")}
+            {dayjs(comment_info.createdAt).format("DD MMMM, YYYY")}
           </span>
         </div>
       </div>

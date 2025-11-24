@@ -29,7 +29,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CommentSchema } from "@/schemas/blog";
 import { Input } from "@/components/ui/input";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import CustomLoader from "@/components/custom_loader/custom_loader";
 import CommentCard from "@/components/comment_card/CommentCard";
 
 const ReadBlogContent = ({
@@ -39,12 +40,19 @@ const ReadBlogContent = ({
 }) => {
   const { blog_id } = use(params);
 
+  const [blogDetailsLoader, setBlogDetailsLoader] = useState<boolean>(false);
+  const [commentsLoader, setCommentsLoader] = useState<boolean>(false);
+  const [commentCreationLoader, setCommentCreationLoader] =
+    useState<boolean>(false);
+  const [likeInteractionLoader, setLikeInteractionLoader] =
+    useState<boolean>(false);
   const [blogDetails, setBlogDetails] = useState<blog | null>(null);
   const [comments, setComments] = useState<comment[] | []>([]);
   const [blogLikes, setBlogLikes] = useState<number>(0);
 
   const fetchBlogDetails = async () => {
     try {
+      setBlogDetailsLoader(true);
       const response = await axiosInstance.get(`/blogs/${blog_id}`);
       if (response.data.success) {
         setBlogDetails(response.data.target_blog);
@@ -56,11 +64,14 @@ const ReadBlogContent = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
+    } finally {
+      setBlogDetailsLoader(false);
     }
   };
 
   const fetchComments = async () => {
     try {
+      setCommentsLoader(true);
       const response = await axiosInstance.get(`/comments/blog/${blog_id}`);
       console.log(response);
 
@@ -72,18 +83,20 @@ const ReadBlogContent = ({
       }
     } catch (error) {
       console.log(error);
-
       setComments([]);
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
         axiosError.response?.data.message ||
           "looks like your session expired! try login again!"
       );
+    } finally {
+      setCommentsLoader(false);
     }
   };
 
   const likeBlogPost = async () => {
     try {
+      setLikeInteractionLoader(true);
       const response = await axiosInstance.post(`/likes/add/${blog_id}`);
       if (response.data.success) {
         toast.success(response.data.message);
@@ -94,6 +107,8 @@ const ReadBlogContent = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
+    } finally {
+      setLikeInteractionLoader(false);
     }
   };
 
@@ -114,6 +129,7 @@ const ReadBlogContent = ({
 
   const commentSubmitter = async (values: z.infer<typeof CommentSchema>) => {
     try {
+      setCommentCreationLoader(true);
       const validation_check = CommentSchema.safeParse(values);
       if (validation_check) {
         const response = await axiosInstance.post("/comments/create", {
@@ -121,11 +137,9 @@ const ReadBlogContent = ({
           blog_id,
         });
 
-        console.log(response);
-
         if (response.data.success) {
           toast.success(response.data.message);
-          setComments((prev) => [...prev, response.data.comment]);
+          await fetchComments();
           commentForm.reset();
           commentForm.clearErrors();
         } else {
@@ -137,6 +151,8 @@ const ReadBlogContent = ({
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       toast.error(axiosError.response?.data.message);
+    } finally {
+      setCommentCreationLoader(false);
     }
   };
 
@@ -144,18 +160,24 @@ const ReadBlogContent = ({
     <div className="w-full max-w-[1100px] min-h-[700px] m-auto px-2 flex justify-center items-start gap-2 flex-wrap">
       {/* blog data displayer */}
       <article className="my-2 w-full min-h-[500px] max-w-[700px] flex flex-col justify-start items-center border rounded-lg mt-5">
-        {blogDetails !== null ? (
+        {blogDetailsLoader ? (
+          <CustomLoader params={{ loading_prompt: "Fetching blog content" }} />
+        ) : blogDetails !== null ? (
           <div className="h-full min-h-[700px] my-3 w-full flex flex-col justify-start items-left px-4">
             <h1 className="text-4xl font-semibold text-center">
               {blogDetails.title}
             </h1>
+
             <Separator className="my-2" />
+
             <img
               src={blogDetails.cover_image}
               alt={blogDetails.title}
               className="w-full rounded-lg"
             />
+
             <Separator className="my-2" />
+
             <div className="flex flex-col space-y-2">
               <span className="text-sm font-medium text-muted-foreground">
                 Blog Author:
@@ -188,7 +210,11 @@ const ReadBlogContent = ({
                   className="flex items-center gap-2"
                   onClick={() => likeBlogPost()}
                 >
-                  <ThumbsUp className="h-5 w-5" />
+                  {likeInteractionLoader ? (
+                    <Spinner className="h-5 w-5" />
+                  ) : (
+                    <ThumbsUp className="h-5 w-5" />
+                  )}
                   <span>{blogLikes}</span>
                   <span>Like this blog</span>
                 </Button>
@@ -196,6 +222,7 @@ const ReadBlogContent = ({
             </div>
 
             <Separator className="my-2" />
+
             {blogDetails && (
               <article
                 className="prose max-w-none ProseMirror"
@@ -211,8 +238,8 @@ const ReadBlogContent = ({
               </EmptyMedia>
               <EmptyTitle>Blog Details Not Found!</EmptyTitle>
               <EmptyDescription>
-                Looks like the details of the blog not found in db or connection
-                issue occurred. Please refresh your page to troubleshoot.
+                Looks like the details of the blog are missing or a connection
+                issue occurred. Please refresh your page.
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -221,6 +248,13 @@ const ReadBlogContent = ({
       {/* comments holder */}
       <section className="my-2 w-full h-screen max-h-[700px] flex flex-col justify-start items-center border rounded-lg mt-5 md:max-w-[350px]">
         <span className="text-2xl font-bold capitalize my-2">Comments</span>
+        {commentsLoader ? (
+          <CustomLoader
+            params={{ loading_prompt: "Loading all the comments" }}
+          />
+        ) : (
+          ""
+        )}
         <Separator />
         {comments.length < 1 ? (
           <Empty className="m-auto">
@@ -266,7 +300,11 @@ const ReadBlogContent = ({
                 }}
               />
               <Button type="submit" size="icon">
-                <Send />
+                {commentCreationLoader ? (
+                  <Spinner className="h-5 w-5" />
+                ) : (
+                  <Send />
+                )}
               </Button>
             </form>
           </Form>

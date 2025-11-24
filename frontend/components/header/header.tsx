@@ -8,6 +8,7 @@ import {
   ThumbsUp,
   MessageSquareHeart,
   LogOut,
+  Home,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -57,13 +58,9 @@ const HeaderComponent = () => {
         {/* links section */}
         <div className="hidden md:flex w-full max-w-[300px] justify-evenly items-center lg:flex">
           <Link href="/">
-            <Button variant="outline">Home</Button>
-          </Link>
-          <Link href="/">
-            <Button variant="outline">About Us</Button>
-          </Link>
-          <Link href="/">
-            <Button variant="outline">Contact Us</Button>
+            <Button variant="outline">
+              <Home /> Home
+            </Button>
           </Link>
         </div>
 

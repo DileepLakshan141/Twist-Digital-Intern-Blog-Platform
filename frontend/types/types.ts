@@ -6,6 +6,12 @@ export type user = {
   createdAt: Date;
 };
 
+export type user_update = {
+  username: string;
+  email: string;
+  profile_pic: string;
+};
+
 export type blog = {
   _id: string;
   title: string;
@@ -28,6 +34,7 @@ export type comment = {
     title: string;
     cover_image: string;
   };
+  createdAt: Date;
 };
 
 export type CloudinaryResult = {

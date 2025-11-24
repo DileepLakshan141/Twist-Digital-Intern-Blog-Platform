@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { axiosInstance } from "@/axios/axios_instance";
 import { Input } from "@/components/ui/input";
+import CustomLoader from "@/components/custom_loader/custom_loader";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { MessageSquareQuote, SearchCheck } from "lucide-react";
@@ -20,15 +21,18 @@ import BlogCard from "@/components/blog_card/blog_card";
 const AllBlogs = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<blog[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const searchBlogs = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.post("/blogs/search", {
         search_term: searchTerm,
       });
       if (response.data.success) {
         toast.success(response.data.message);
         setSearchResults(response.data.data);
+        setLoading(false);
       } else {
         toast.error(response.data.message);
       }
@@ -47,7 +51,7 @@ const AllBlogs = () => {
       await searchBlogs();
     };
     fetchBlogs();
-  }, [searchTerm]);
+  }, []);
 
   return (
     <div className="w-full max-w-[1100px] min-h-[700px] m-auto px-5 flex flex-col justify-start items-center">
@@ -72,11 +76,17 @@ const AllBlogs = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Enter a search term"
         />
-        <Button className="h-10 ml-3">
+        <Button className="h-10 ml-3" onClick={() => searchBlogs()}>
           <SearchCheck />
           Search Blogs
         </Button>
       </section>
+
+      {loading ? (
+        <CustomLoader params={{ loading_prompt: "Getting available blogs" }} />
+      ) : (
+        ""
+      )}
 
       {searchResults.length < 1 ? (
         <Empty>
