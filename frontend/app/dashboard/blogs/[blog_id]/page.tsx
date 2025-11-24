@@ -5,7 +5,13 @@ import { blog, comment } from "@/types/types";
 import { axiosInstance } from "@/axios/axios_instance";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Empty,
   EmptyDescription,
@@ -13,11 +19,18 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { CloudOff, MessageSquareMore, ThumbsUp } from "lucide-react";
+import { CloudOff, MessageSquareMore, Send, ThumbsUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CommentSchema } from "@/schemas/blog";
+import { Input } from "@/components/ui/input";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import CommentCard from "@/components/comment_card/CommentCard";
 
 const ReadBlogContent = ({
   params,
@@ -90,11 +103,43 @@ const ReadBlogContent = ({
       await fetchComments();
     };
     fetchData();
-  }, [blog_id]);
+  }, []);
 
-  {
-    console.log(blogDetails);
-  }
+  const commentForm = useForm<z.infer<typeof CommentSchema>>({
+    resolver: zodResolver(CommentSchema),
+    defaultValues: {
+      comment: "",
+    },
+  });
+
+  const commentSubmitter = async (values: z.infer<typeof CommentSchema>) => {
+    try {
+      const validation_check = CommentSchema.safeParse(values);
+      if (validation_check) {
+        const response = await axiosInstance.post("/comments/create", {
+          content: values.comment,
+          blog_id,
+        });
+
+        console.log(response);
+
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setComments((prev) => [...prev, response.data.comment]);
+          commentForm.reset();
+          commentForm.clearErrors();
+        } else {
+          toast.error(response.data.message);
+        }
+      } else {
+        return toast.error("validation check failed");
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
+    }
+  };
+
   return (
     <div className="w-full max-w-[1100px] min-h-[700px] m-auto px-2 flex justify-center items-start gap-2 flex-wrap">
       {/* blog data displayer */}
@@ -174,7 +219,9 @@ const ReadBlogContent = ({
         )}
       </article>
       {/* comments holder */}
-      <section className="my-2 w-full h-screen max-h-[500px] max-w-[350px] flex flex-col justify-start items-center border rounded-lg mt-5">
+      <section className="my-2 w-full h-screen max-h-[700px] flex flex-col justify-start items-center border rounded-lg mt-5 md:max-w-[350px]">
+        <span className="text-2xl font-bold capitalize my-2">Comments</span>
+        <Separator />
         {comments.length < 1 ? (
           <Empty className="m-auto">
             <EmptyHeader>
@@ -189,11 +236,41 @@ const ReadBlogContent = ({
             </EmptyHeader>
           </Empty>
         ) : (
-          <div className="h-screen my-3 w-full flex flex-col justify-start items-left border rounded-lg"></div>
+          <div className="h-screen my-3 w-full flex flex-col justify-start px-2 rounded-lg">
+            {comments.map((comment: comment) => {
+              return <CommentCard comment_info={comment} key={comment._id} />;
+            })}
+          </div>
         )}
-        <Card className="w-[95%] m-2">
-          <CardContent></CardContent>
-        </Card>
+        <div className="mx-2 rounded-lg p-2 w-full flex justify-evenly">
+          <Form {...commentForm}>
+            <form
+              className="w-full flex"
+              onSubmit={commentForm.handleSubmit(commentSubmitter)}
+            >
+              <FormField
+                name="comment"
+                control={commentForm.control}
+                render={({ field }) => {
+                  return (
+                    <FormItem className="w-full mr-2">
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your comment here"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+              <Button type="submit" size="icon">
+                <Send />
+              </Button>
+            </form>
+          </Form>
+        </div>
       </section>
     </div>
   );

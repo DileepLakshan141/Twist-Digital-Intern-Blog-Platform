@@ -6,3 +6,7 @@ export const BlogFormSchema = z.object({
   author_id: z.string().min(1, "Author ID is required"),
   cover_image: z.string().optional(),
 });
+
+export const CommentSchema = z.object({
+  comment: z.string().min(1, "Comment must have at least 1 character/letter"),
+});

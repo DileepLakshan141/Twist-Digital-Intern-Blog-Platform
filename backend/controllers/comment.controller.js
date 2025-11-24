@@ -2,29 +2,35 @@ const comment = require("../models/comment.model");
 
 const createComment = async (req, res) => {
   try {
-    const { content, blog_id, user_id } = req.params;
+    const { content, blog_id } = req.body;
 
-    if (!blog_id || !user_id) {
+    if (!blog_id || !content) {
       return res.status(404).json({
         success: false,
-        message: "blog id , content and user id is required!",
+        message: "blog id and content is required!",
       });
     }
 
-    if (req.user.id !== user_id.toString()) {
+    if (!req.user.id) {
       return res.status(403).json({
         success: false,
-        message: "signed in user id and author id mismatch detected!",
+        message: "no user_id detected in the session!",
       });
     }
-
-    const new_comment = await comment.create({ content, blog_id, user_id });
+    const user_id = req.user.id;
+    const new_comment = await comment.create({
+      comment: content,
+      blog_id,
+      user_id,
+    });
     if (new_comment) {
-      return req
-        .status(201)
-        .json({ success: true, message: "your comment recorded!" });
+      return res.status(201).json({
+        success: true,
+        message: "your comment recorded!",
+        comment: new_comment,
+      });
     } else {
-      return req
+      return res
         .status(400)
         .json({ success: true, message: "error occurred! comment not added!" });
     }
@@ -47,7 +53,16 @@ const getAllCommentsForBlog = async (req, res) => {
         .json({ success: false, message: "blog id not found inside params!" });
     }
 
-    const comments = await comment.find({ blog_id });
+    const comments = await comment
+      .find({ blog_id })
+      .populate({
+        path: "user_id",
+        select: "username profile_pic createdAt",
+      })
+      .populate({
+        path: "blog_id",
+        select: "title cover_image",
+      });
     return res.status(200).json({
       success: true,
       message: "comments fetched successfully!",

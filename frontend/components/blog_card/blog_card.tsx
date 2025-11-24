@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const BlogCard = ({ blog_details }: { blog_details: blog }) => {
   return (
-    <div className="h-[410px] p-3 border rounded-lg md:h-[440px]">
+    <div className="h-[450px] p-3 border rounded-lg md:h-[470px]">
       <img
         src={blog_details.cover_image}
         alt={blog_details.title}

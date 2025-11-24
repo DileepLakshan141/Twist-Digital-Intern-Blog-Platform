@@ -6,7 +6,10 @@ const tokenValidator = (req, res, next) => {
     if (!token) {
       return res
         .status(404)
-        .json({ success: false, message: "access token not found" });
+        .json({
+          success: false,
+          message: "access token expired! please sign in again!",
+        });
     }
     const decoded_data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.user = decoded_data;

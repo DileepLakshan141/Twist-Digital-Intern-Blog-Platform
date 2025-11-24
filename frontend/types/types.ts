@@ -17,9 +17,17 @@ export type blog = {
 };
 
 export type comment = {
+  _id: string;
   comment: string;
-  user_id: user;
-  blog_id: string;
+  user_id: {
+    username: string;
+    profile_pic: string;
+    createdAt: Date;
+  };
+  blog_id: {
+    title: string;
+    cover_image: string;
+  };
 };
 
 export type CloudinaryResult = {
