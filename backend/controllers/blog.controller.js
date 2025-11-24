@@ -71,6 +71,35 @@ const getAllBlogs = async (req, res) => {
   }
 };
 
+const searchBlogs = async (req, res) => {
+  try {
+    const { search_term } = req.body;
+    const query = {};
+    if (search_term) {
+      query.title = {
+        $regex: search_term,
+        $options: "i",
+      };
+    }
+
+    const all_blogs = await blog
+      .find(query)
+      .populate("author", "username profile_pic createdAt");
+
+    return res.status(200).json({
+      success: true,
+      message: "blogs fetched successfully",
+      data: all_blogs,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "server error! blog fetch failed!",
+    });
+  }
+};
+
 const getSpecificBlog = async (req, res) => {
   try {
     const { blog_id } = req.params;
@@ -81,7 +110,9 @@ const getSpecificBlog = async (req, res) => {
         .json({ success: false, message: "blog id not found!" });
     }
 
-    const target_blog = await blog.findById(blog_id);
+    const target_blog = await blog
+      .findById(blog_id)
+      .populate("author", "username profile_pic createdAt");
 
     if (target_blog) {
       return res
@@ -214,4 +245,5 @@ module.exports = {
   createNewBlog,
   updateSpecificBlog,
   deleteSpecificBlog,
+  searchBlogs,
 };

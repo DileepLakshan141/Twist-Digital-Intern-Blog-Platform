@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { axiosInstance } from "@/axios/axios_instance";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
@@ -13,12 +13,44 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import BlogCard from "@/components/blog_card/blog_card";
 
 const AllBlogs = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<blog[]>([]);
+
+  const searchBlogs = async () => {
+    try {
+      const response = await axiosInstance.post("/blogs/search", {
+        search_term: searchTerm,
+      });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setSearchResults(response.data.data);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      setSearchResults([]);
+      const axiosError = error as AxiosError<{ message: string }>;
+      return {
+        success: false,
+        message: axiosError.response?.data?.message,
+      };
+    }
+  };
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      await searchBlogs();
+    };
+    fetchBlogs();
+  }, [searchTerm]);
+
   return (
-    <div className="w-full max-w-[900px] min-h-[700px] m-auto px-5 flex flex-col justify-start items-center">
+    <div className="w-full max-w-[1100px] min-h-[700px] m-auto px-5 flex flex-col justify-start items-center">
       <Image
         className="mt-2"
         src="/blgr.png"
@@ -60,7 +92,11 @@ const AllBlogs = () => {
           </EmptyHeader>
         </Empty>
       ) : (
-        <section className="w-full grid columns-auto auto-rows-auto"></section>
+        <section className="w-full mb-8 gap-6 grid grid-cols-1 md:grid-cols-3 ">
+          {searchResults.map((blog: blog) => {
+            return <BlogCard blog_details={blog} key={blog._id} />;
+          })}
+        </section>
       )}
     </div>
   );

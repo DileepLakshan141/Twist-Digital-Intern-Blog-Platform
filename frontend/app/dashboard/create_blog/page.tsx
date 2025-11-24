@@ -159,10 +159,10 @@ const CreateNewBlog = () => {
 
   return (
     <article className="w-full max-w-[1100px] min-h-[700px] m-auto px-5 flex flex-col justify-start items-center">
-      <section className="w-full flex flex-col justify-start items-start mt-5">
+      <div className="w-full flex flex-col justify-start items-start mt-5">
         <h1 className="text-3xl font-bold">Create New Blog</h1>
         <Separator className="my-3" />
-      </section>
+      </div>
 
       <Card className="w-full mt-6">
         <CardHeader>

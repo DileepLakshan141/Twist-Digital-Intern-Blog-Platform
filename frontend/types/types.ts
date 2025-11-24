@@ -16,6 +16,12 @@ export type blog = {
   createdAt: Date;
 };
 
+export type comment = {
+  comment: string;
+  user_id: user;
+  blog_id: string;
+};
+
 export type CloudinaryResult = {
   secure_url: string;
 };

@@ -25,6 +25,7 @@ app.use("/twist_digital_blog/api/auth", require("./routes/auth.routes"));
 app.use("/twist_digital_blog/api/users", require("./routes/user.routes"));
 app.use("/twist_digital_blog/api/blogs", require("./routes/blog.routes"));
 app.use("/twist_digital_blog/api/likes", require("./routes/like.routes"));
+app.use("/twist_digital_blog/api/comments", require("./routes/comment.route"));
 
 app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);

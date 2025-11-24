@@ -34,6 +34,7 @@
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.19",
     "dompurify": "^3.3.0",
     "dotenv": "^17.2.3",
     "lucide-react": "^0.554.0",

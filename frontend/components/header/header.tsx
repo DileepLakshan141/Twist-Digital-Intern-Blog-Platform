@@ -106,14 +106,18 @@ const HeaderComponent = () => {
                     Create new blog
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>
-                  <Rss />
-                  My blogs
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <UserPen />
-                  My profile
-                </DropdownMenuItem>
+                <Link href={`/dashboard/my_blogs/${user.user_id}`}>
+                  <DropdownMenuItem>
+                    <Rss />
+                    My blogs
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={`/dashboard/profile/${user.user_id}`}>
+                  <DropdownMenuItem>
+                    <UserPen />
+                    My profile
+                  </DropdownMenuItem>
+                </Link>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>

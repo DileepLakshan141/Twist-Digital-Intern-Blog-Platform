@@ -1,0 +1,202 @@
+"use client";
+import { use } from "react";
+import { useState, useEffect } from "react";
+import { blog, comment } from "@/types/types";
+import { axiosInstance } from "@/axios/axios_instance";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { CloudOff, MessageSquareMore, ThumbsUp } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import dayjs from "dayjs";
+import { Button } from "@/components/ui/button";
+
+const ReadBlogContent = ({
+  params,
+}: {
+  params: Promise<{ blog_id: string }>;
+}) => {
+  const { blog_id } = use(params);
+
+  const [blogDetails, setBlogDetails] = useState<blog | null>(null);
+  const [comments, setComments] = useState<comment[] | []>([]);
+  const [blogLikes, setBlogLikes] = useState<number>(0);
+
+  const fetchBlogDetails = async () => {
+    try {
+      const response = await axiosInstance.get(`/blogs/${blog_id}`);
+      if (response.data.success) {
+        setBlogDetails(response.data.target_blog);
+        setBlogLikes(response.data.target_blog.likes);
+      } else {
+        setBlogDetails(null);
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const response = await axiosInstance.get(`/comments/blog/${blog_id}`);
+      console.log(response);
+
+      if (response.data.success) {
+        setComments(response.data.comments);
+      } else {
+        setComments([]);
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+
+      setComments([]);
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(
+        axiosError.response?.data.message ||
+          "looks like your session expired! try login again!"
+      );
+    }
+  };
+
+  const likeBlogPost = async () => {
+    try {
+      const response = await axiosInstance.post(`/likes/add/${blog_id}`);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setBlogLikes((prev) => prev + 1);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchBlogDetails();
+      await fetchComments();
+    };
+    fetchData();
+  }, [blog_id]);
+
+  {
+    console.log(blogDetails);
+  }
+  return (
+    <div className="w-full max-w-[1100px] min-h-[700px] m-auto px-2 flex justify-center items-start gap-2 flex-wrap">
+      {/* blog data displayer */}
+      <article className="my-2 w-full min-h-[500px] max-w-[700px] flex flex-col justify-start items-center border rounded-lg mt-5">
+        {blogDetails !== null ? (
+          <div className="h-full min-h-[700px] my-3 w-full flex flex-col justify-start items-left px-4">
+            <h1 className="text-4xl font-semibold text-center">
+              {blogDetails.title}
+            </h1>
+            <Separator className="my-2" />
+            <img
+              src={blogDetails.cover_image}
+              alt={blogDetails.title}
+              className="w-full rounded-lg"
+            />
+            <Separator className="my-2" />
+            <div className="flex flex-col space-y-2">
+              <span className="text-sm font-medium text-muted-foreground">
+                Blog Author:
+              </span>
+
+              <div className="flex justify-between items-center gap-3 p-2 rounded-xl bg-secondary/40">
+                <div className="flex">
+                  <Avatar className="h-12 w-12 rounded-xl">
+                    <AvatarImage
+                      src={blogDetails.author.profile_pic}
+                      className="rounded-xl"
+                    />
+                    <AvatarFallback className="uppercase text-lg">
+                      {blogDetails.author.username.slice(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex flex-col leading-tight ml-4">
+                    <span className="font-semibold text-base">
+                      {blogDetails.author.username}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      Created On:{" "}
+                      {dayjs(blogDetails.createdAt).format("DD MMM, YYYY")}
+                    </span>
+                  </div>
+                </div>
+
+                <Button
+                  className="flex items-center gap-2"
+                  onClick={() => likeBlogPost()}
+                >
+                  <ThumbsUp className="h-5 w-5" />
+                  <span>{blogLikes}</span>
+                  <span>Like this blog</span>
+                </Button>
+              </div>
+            </div>
+
+            <Separator className="my-2" />
+            {blogDetails && (
+              <article
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: blogDetails.content }}
+              />
+            )}
+          </div>
+        ) : (
+          <Empty className="m-auto">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CloudOff />
+              </EmptyMedia>
+              <EmptyTitle>Blog Details Not Found!</EmptyTitle>
+              <EmptyDescription>
+                Looks like the details of the blog not found in db or connection
+                issue occurred. Please refresh your page to troubleshoot.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        )}
+      </article>
+      {/* comments holder */}
+      <section className="my-2 w-full h-screen max-h-[500px] max-w-[350px] flex flex-col justify-start items-center border rounded-lg mt-5">
+        {comments.length < 1 ? (
+          <Empty className="m-auto">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MessageSquareMore />
+              </EmptyMedia>
+              <EmptyTitle>No Comments Yet!</EmptyTitle>
+              <EmptyDescription>
+                No comments have published for this blog yet. Be the first one
+                to comment for this blog
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          <div className="h-screen my-3 w-full flex flex-col justify-start items-left border rounded-lg"></div>
+        )}
+        <Card className="w-[95%] m-2">
+          <CardContent></CardContent>
+        </Card>
+      </section>
+    </div>
+  );
+};
+
+export default ReadBlogContent;
