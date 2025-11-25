@@ -56,22 +56,26 @@
 ### **Backend**
 
 backend/
+├─ config/
 ├─ controllers/
+├─ middleware/
 ├─ models/
 ├─ routes/
-├─ middleware/
 ├─ utils/
-├─ config/
-└─ server.js
+└─ app.js
 
 ### **Frontend**
 
 frontend/
+├─ actions/
 ├─ app/
+├─ axios/
 ├─ components/
-├─ pages/
+├─ hooks/
+├─ lib/
 ├─ public/
-├─ styles/
+├─ schemas/
+├─ types/
 └─ utils/
 
 ---
@@ -88,8 +92,8 @@ frontend/
 2. Create a .env file in the backend root with the following variables:
    ```PORT=4000
    ENVIRONMENT=development
-   MONGO_DB_URI=<your MongoDB Atlas connection string>
-   ACCESS_TOKEN_SECRET=<your JWT secret>
+   MONGO_DB_URI=<MongoDB Atlas connection string>
+   ACCESS_TOKEN_SECRET=<JWT secret>
    ```
 3. Run the backend server:
    ```
