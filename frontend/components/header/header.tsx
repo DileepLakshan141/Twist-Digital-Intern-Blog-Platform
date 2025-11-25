@@ -133,7 +133,7 @@ const HeaderComponent = () => {
             <Link href="/signin">
               <Button>Sign in</Button>
             </Link>
-            <Link href="/signin">
+            <Link href="/signup">
               <Button className="ml-2">Sign up</Button>
             </Link>
           </div>
