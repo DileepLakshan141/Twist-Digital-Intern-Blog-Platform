@@ -46,7 +46,6 @@
 - **Frontend:** Next.js, React.js
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB (Atlas)
-- **Libraries & Tools:** Zod, Shadcn, TailwindCSS, Day.js, JWT, bcrypt, Cloudinary
 - **Rich Text Editor:** Tiptap
 
 ---
@@ -167,3 +166,10 @@ https://documenter.getpostman.com/view/25158331/2sB3dHXDuD
 | Rich Text Editor (Tiptap)        | ✅     |
 | Cover Image Upload (Cloudinary)  | ✅     |
 | Responsive UI                    | ✅     |
+
+## Screenshots
+
+1. Home Page
+<img width="1920" height="1047" alt="home-p1" src="https://github.com/user-attachments/assets/8ea26582-33f8-4180-ad44-afad02b5d55b" />
+
+<img width="1920" height="1039" alt="home-p2" src="https://github.com/user-attachments/assets/3c18963d-85d9-4f9e-8222-b9c3e20656d1" />
