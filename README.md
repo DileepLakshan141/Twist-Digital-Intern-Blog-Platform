@@ -173,3 +173,43 @@ https://documenter.getpostman.com/view/25158331/2sB3dHXDuD
 <img width="1920" height="1047" alt="home-p1" src="https://github.com/user-attachments/assets/8ea26582-33f8-4180-ad44-afad02b5d55b" />
 
 <img width="1920" height="1039" alt="home-p2" src="https://github.com/user-attachments/assets/3c18963d-85d9-4f9e-8222-b9c3e20656d1" />
+
+2. All Blogs(including search)
+
+<img width="1920" height="1080" alt="all-blogs" src="https://github.com/user-attachments/assets/9aaab4c9-9f55-4038-80a5-08084e91305b" />
+
+3. Read Blog
+
+<img width="1920" height="1042" alt="read-blog-p1" src="https://github.com/user-attachments/assets/2ce04b43-7072-4191-acd3-9a93c991f411" />
+
+<img width="1920" height="1042" alt="read-blog-p2" src="https://github.com/user-attachments/assets/cb3aa96a-5a83-4e31-b90c-81731df78a2a" />
+
+4. Create Blog
+
+<img width="1920" height="1080" alt="create blog" src="https://github.com/user-attachments/assets/c3b4dc1c-a468-4c53-b36f-693a7f437222" />
+
+5. My Blogs
+   
+<img width="1920" height="1044" alt="my-blogs" src="https://github.com/user-attachments/assets/f6f8ab50-fa8f-4902-92a8-ad111d3ff8d9" />
+
+7. Update Blogs
+   
+<img width="1920" height="1042" alt="update-p1" src="https://github.com/user-attachments/assets/4bfff23c-e23a-4858-995b-8382173ef3e7" />
+
+<img width="1920" height="1042" alt="update-p2" src="https://github.com/user-attachments/assets/275890c7-6c85-4e77-b06b-b8c886e66bd1" />
+
+8. Delete Blog Confirmation
+<img width="1920" height="1039" alt="delete-blog" src="https://github.com/user-attachments/assets/9d0da2ad-111a-4c1d-984a-727f71a0db38" />
+
+9. Profile Page
+<img width="1920" height="1026" alt="profile" src="https://github.com/user-attachments/assets/536746ea-b0ca-4fb4-a210-27d7f59e135e" />
+
+10. Sign in
+<img width="1920" height="1042" alt="sign-in" src="https://github.com/user-attachments/assets/d998f33e-816d-458f-85e3-3eb020845d95" />
+
+11. Sign Up
+<img width="1920" height="1044" alt="sign-up" src="https://github.com/user-attachments/assets/1461c867-b5ef-4226-8f87-d84ccc71fb5e" />
+
+
+
+
